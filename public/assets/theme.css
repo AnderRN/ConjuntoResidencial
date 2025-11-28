@@ -1,0 +1,35 @@
+
+/* New modern theme */
+body {
+  background: #f4f7fb;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left menu */
+.sidebar {
+  background-color: #0B3556 !important;
+}
+.sidebar a {
+  color: white !important;
+}
+.sidebar a.active {
+  background-color: #1E90FF !important;
+}
+.sidebar a:hover {
+  background-color: #0f4c75 !important;
+}
+
+/* Top bar */
+.topbar {
+  background: white !important;
+  color: #0B3556 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Anuncios</title>
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/theme.css">
+</head>
+
+<body>
+
+<header class="header">
+    <a href="index.html">Inicio</a>
+    <a href="reservas.html">Reservas</a>
+    <a href="pagos.html">Pagos</a>
+    <a href="anuncios.html">Anuncios</a>
+    <a href="#" id="logoutLink">Cerrar sesión</a>
+</header>
+
+<main class="container">
+
+    <h2>Admin - Anuncios</h2>
+
+    <div class="form-card">
+        <input id="titulo" placeholder="Título">
+        <textarea id="descripcion" placeholder="Descripción"></textarea>
+        <button id="btnCrear">Publicar</button>
+    </div>
+
+    <h3>Anuncios publicados</h3>
+    <div id="cardsAdmin" class="cards-grid"></div>
+
+</main>
+
+<!-- ORDEN CORRECTO DE SCRIPTS -->
+<script src="assets/menu.js"></script>
+<script src="assets/auth.js"></script>   <!-- ← FALTABA ESTO -->
+<script src="assets/admin_anuncios.js"></script>
+
+</body>
+</html>

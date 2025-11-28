@@ -1,0 +1,18 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { initDb } = require('./db');
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+initDb();
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api', require('./routes/api'));
+app.use('/api/anuncios', require('./routes/anuncios'));
+app.use('/api/admin/anuncios', require('./routes/admin_anuncios'));
+app.use('/api/reservas', require('./routes/reservas'));
+app.use('/api/admin/reservas', require('./routes/admin_reservas'));
+app.use('/api/pagos', require('./routes/pagos'));
+app.use('/api/admin/pagos', require('./routes/admin_pagos'));
+app.listen(process.env.PORT||4000, ()=>console.log('Running on 4000'));

@@ -1,0 +1,100 @@
+/* ==== ESTILOS BASE PARA TODAS LAS PÁGINAS ==== */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f5f8fb;
+    color: #333;
+}
+
+/* HEADER */
+.header {
+    background: #003566;
+    color: #fff;
+    padding: 15px;
+    display: flex;
+    gap: 20px;
+}
+
+.header a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.header a:hover {
+    color: #90e0ef;
+    text-decoration: underline;
+}
+
+/* CONTENEDORES */
+.container {
+    padding: 30px;
+}
+
+/* TARJETAS GENERALES */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    border-left: 4px solid #0077b6;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* BOTONES */
+.btn {
+    background: #0077b6;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s;
+    font-size: 15px;
+}
+
+.btn:hover {
+    background: #0096c7;
+    transform: translateY(-2px);
+}
+
+/* INPUTS */
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+/* TABLAS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background: #003566;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+td {
+    padding: 10px;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
