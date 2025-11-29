@@ -1,7 +1,120 @@
-const API_ADMIN = '/api/admin/reservas';
-async function apiFetch(path, opts={}){ const token=localStorage.getItem('token'); opts.headers=opts.headers||{}; if(token) opts.headers['Authorization']='Bearer '+token; if(!opts.method) opts.method='GET'; const r=await fetch(path, opts); return r.json(); }
-function modalShow(html, buttons=[]){ const root=document.getElementById('modal-root'); root.innerHTML=`<div class="modal-overlay"><div class="modal">${html}<div class="actions"></div></div></div>`; const actions=root.querySelector('.actions'); buttons.forEach(b=>{ const btn=document.createElement('button'); btn.textContent=b.label; if(b.primary) btn.style.background='#0066ff'; btn.addEventListener('click', ()=>{ if(b.onClick) b.onClick(); root.innerHTML=''; }); actions.appendChild(btn); }); }
-function formatTimeAMPM(t){ const [hh,mm]=t.split(':'); let h=parseInt(hh,10); const am=h<12; const dh=((h+11)%12)+1; return `${dh}:${mm} ${am?'AM':'PM'}`; }
-function renderTable(rows){ const tbody=document.querySelector('#adminTable tbody'); tbody.innerHTML=''; rows.forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.name||r.email}</td><td>${r.zona}</td><td>${r.fecha}</td><td>${formatTimeAMPM(r.hora)}</td><td>${r.estado}</td><td><button data-id="${r.id}" class="complete">✅</button><button data-id="${r.id}" class="del">🗑️</button></td>`; tbody.appendChild(tr); }); document.querySelectorAll('.del').forEach(b=> b.addEventListener('click', e=>{ const id=e.target.dataset.id; modalShow('<p>Eliminar reserva?</p>',[{label:'Cancelar'},{label:'Eliminar',primary:true,onClick: async ()=>{ const rr=await apiFetch(API_ADMIN+'/'+id,{method:'DELETE'}); if(rr.ok) loadAll(); else alert(rr.msg||'Error'); }}]); })); document.querySelectorAll('.complete').forEach(b=> b.addEventListener('click', e=>{ const id=e.target.dataset.id; modalShow('<p>Marcar como completada?</p>',[{label:'Cancelar'},{label:'Confirmar',primary:true,onClick: async ()=>{ const rr=await apiFetch(API_ADMIN+'/'+id,{method:'PATCH'}); if(rr.ok) loadAll(); else alert(rr.msg||'Error'); }}]); })); }
-async function loadAll(){ const res=await apiFetch(API_ADMIN); if(!res.ok){ if(res.msg) alert(res.msg); else alert('Error'); return; } renderTable(res.reservas); }
-document.addEventListener('DOMContentLoaded', ()=>{ const token=localStorage.getItem('token'); if(!token) return window.location.href='login.html'; try{ const pl=JSON.parse(atob(token.split('.')[1])); if(pl.role!=='admin') return window.location.href='reservas.html'; }catch(e){ return window.location.href='reservas.html'; } document.getElementById('search').addEventListener('input', ()=>{ const q=document.getElementById('search').value.toLowerCase(); const zona=document.getElementById('filterZona').value; const estado=document.getElementById('filterEstado').value; loadAll().then(()=>{ const rows = Array.from(document.querySelectorAll('#adminTable tbody tr')); rows.forEach(tr=>{ const txt=tr.textContent.toLowerCase(); const match = (!q || txt.includes(q)) && (!zona || tr.children[1].textContent===zona) && (!estado || tr.children[4].textContent===estado); tr.style.display = match ? '' : 'none'; }); }); }); document.getElementById('filterZona').addEventListener('change', ()=>document.getElementById('search').dispatchEvent(new Event('input'))); document.getElementById('filterEstado').addEventListener('change', ()=>document.getElementById('search').dispatchEvent(new Event('input'))); document.getElementById('btnReset').addEventListener('click', ()=>{ document.getElementById('search').value=''; document.getElementById('filterZona').value=''; document.getElementById('filterEstado').value=''; document.getElementById('search').dispatchEvent(new Event('input')); }); loadAll(); });
+// CAMBIO CLAVE 1: Definir la URL base de tu backend en Render.
+// DEBES REEMPLAZAR 'https://TU-BACKEND-RENDER.onrender.com' con la URL real de tu Web Service en Render.
+const API_BASE_URL = 'https://TU-BACKEND-RENDER.onrender.com';
+const API_ENDPOINT = API_BASE_URL + '/api';
+
+// CAMBIO 2: Usar el endpoint absoluto para la ruta de administración de reservas
+const API_ADMIN = API_ENDPOINT + '/admin/reservas';
+
+async function apiFetch(path, opts={}){ 
+    const token=localStorage.getItem('token'); 
+    opts.headers=opts.headers||{}; 
+    if(token) opts.headers['Authorization']='Bearer '+token; 
+    if(!opts.method) opts.method='GET'; 
+    
+    // fetch usa la ruta absoluta que le pasamos (que ahora está definida en API_ADMIN)
+    const r=await fetch(path, opts); 
+    return r.json(); 
+}
+
+function modalShow(html, buttons=[]){ 
+    const root=document.getElementById('modal-root'); 
+    root.innerHTML=`<div class="modal-overlay"><div class="modal">${html}<div class="actions"></div></div></div>`; 
+    const actions=root.querySelector('.actions'); 
+    buttons.forEach(b=>{ 
+        const btn=document.createElement('button'); 
+        btn.textContent=b.label; 
+        if(b.primary) btn.style.background='#0066ff'; 
+        btn.addEventListener('click', ()=>{ 
+            if(b.onClick) b.onClick(); 
+            root.innerHTML=''; 
+        }); 
+        actions.appendChild(btn); 
+    }); 
+}
+
+function formatTimeAMPM(t){ 
+    const [hh,mm]=t.split(':'); 
+    let h=parseInt(hh,10); 
+    const am=h<12; 
+    const dh=((h+11)%12)+1; 
+    return `${dh}:${mm} ${am?'AM':'PM'}`; 
+}
+
+function renderTable(rows){ 
+    const tbody=document.querySelector('#adminTable tbody'); 
+    tbody.innerHTML=''; 
+    
+    rows.forEach(r=>{ 
+        const tr=document.createElement('tr'); 
+        tr.innerHTML=`<td>${r.name||r.email}</td><td>${r.zona}</td><td>${r.fecha}</td><td>${formatTimeAMPM(r.hora)}</td><td>${r.estado}</td><td><button data-id="${r.id}" class="complete">✅</button><button data-id="${r.id}" class="del">🗑️</button></td>`; 
+        tbody.appendChild(tr); 
+    }); 
+    
+    document.querySelectorAll('.del').forEach(b=> b.addEventListener('click', e=>{ 
+        const id=e.target.dataset.id; 
+        modalShow('<p>Eliminar reserva?</p>',[{label:'Cancelar'},{label:'Eliminar',primary:true,onClick: async ()=>{ 
+            // CAMBIO 3: La ruta usa API_ADMIN (que es absoluta)
+            const rr=await apiFetch(API_ADMIN+'/'+id,{method:'DELETE'}); 
+            if(rr.ok) loadAll(); 
+            else alert(rr.msg||'Error'); 
+        }}]); 
+    })); 
+    
+    document.querySelectorAll('.complete').forEach(b=> b.addEventListener('click', e=>{ 
+        const id=e.target.dataset.id; 
+        modalShow('<p>Marcar como completada?</p>',[{label:'Cancelar'},{label:'Confirmar',primary:true,onClick: async ()=>{ 
+            // CAMBIO 4: La ruta usa API_ADMIN (que es absoluta)
+            const rr=await apiFetch(API_ADMIN+'/'+id,{method:'PATCH'}); 
+            if(rr.ok) loadAll(); 
+            else alert(rr.msg||'Error'); 
+        }}]); 
+    })); 
+}
+
+async function loadAll(){ 
+    // CAMBIO 5: La ruta usa API_ADMIN (que es absoluta)
+    const res=await apiFetch(API_ADMIN); 
+    if(!res.ok){ 
+        if(res.msg) alert(res.msg); 
+        else alert('Error'); 
+        return; 
+    } 
+    renderTable(res.reservas); 
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{ 
+    const token=localStorage.getItem('token'); 
+    if(!token) return window.location.href='login.html'; 
+    try{ 
+        const pl=JSON.parse(atob(token.split('.')[1])); 
+        if(pl.role!=='admin') return window.location.href='reservas.html'; 
+    }catch(e){ return window.location.href='reservas.html'; } 
+    
+    document.getElementById('search').addEventListener('input', ()=>{ 
+        const q=document.getElementById('search').value.toLowerCase(); 
+        const zona=document.getElementById('filterZona').value; 
+        const estado=document.getElementById('filterEstado').value; 
+        
+        loadAll().then(()=>{ 
+            const rows = Array.from(document.querySelectorAll('#adminTable tbody tr')); 
+            rows.forEach(tr=>{ 
+                const txt=tr.textContent.toLowerCase(); 
+                const match = (!q || txt.includes(q)) && (!zona || tr.children[1].textContent===zona) && (!estado || tr.children[4].textContent===estado); 
+                tr.style.display = match ? '' : 'none'; 
+            }); 
+        }); 
+    }); 
+    
+    document.getElementById('filterZona').addEventListener('change', ()=>document.getElementById('search').dispatchEvent(new Event('input'))); 
+    document.getElementById('filterEstado').addEventListener('change', ()=>document.getElementById('search').dispatchEvent(new Event('input'))); 
+    
+    document.getElementById('btnReset').addEventListener('click', ()=>{ 
+        document.getElementById('search').value=''; 
+        document.getElementById('filterZona').value=''; 
+        document.getElementById('filterEstado').value=''; 
+        document.getElementById('search').dispatchEvent(new Event('input')); 
+    }); 
+    
+    loadAll(); 
+});
