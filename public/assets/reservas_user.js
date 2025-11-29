@@ -1,6 +1,6 @@
 // CAMBIO CLAVE 1: Definir la URL base de tu backend en Render.
 // DEBES REEMPLAZAR 'https://TU-BACKEND-RENDER.onrender.com' con la URL real de tu Web Service en Render.
-const API_BASE_URL = 'https://TU-BACKEND-RENDER.onrender.com';
+const API_BASE_URL = 'https://miconjuntoresidencial.onrender.com';
 const API_ENDPOINT = API_BASE_URL + '/api';
 
 // CAMBIO 2: Usar el endpoint absoluto para la ruta de reservas
